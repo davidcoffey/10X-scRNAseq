@@ -4,8 +4,9 @@
 # Updated April 19, 2018
 
 # Varaibles
-#export BCL_DIRECTORY=""
-#export FASTQ_DIRECTORY=""
+# export BCL_DIRECTORY=""
+# export FASTQ_DIRECTORY=""
+# export SAMPLESHEET=""
 
 # Start time
 START=`date +%s`
@@ -13,8 +14,9 @@ echo Ran MakeFastQ.sh on `date +"%B %d, %Y at %r"`
 
 module load cellranger
 cellranger mkfastq \
---run $BCL_DIRECTORY \
---output-dir $FASTQ_DIRECTORY
+--run=$BCL_DIRECTORY \
+--output-dir=$FASTQ_DIRECTORY \
+--csv=$SAMPLESHEET
 
 # End time
 END=`date +%s`
