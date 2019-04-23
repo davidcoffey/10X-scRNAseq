@@ -6,8 +6,7 @@
 # Varaibles
 #export ROOT="/fh/fast/warren_h/users/dcoffey/scRNAseq/10X041619"
 #export SAMPLESHEET_H5="$ROOT/SampleSheet/AH7273DRXX_H5_samples.csv"
-#export SAMPLES="201687_6B_0 202823_6P_0 333196_6B_1 333224_6P_1"
-#export FASTQ_DIRECTORY="$ROOT/FASTQ"
+#export MATRIX_DIRECTORY="$ROOT/Aggregate/outs/filtered_feature_bc_matrix"
 
 # Start time
 START=`date +%s`
@@ -18,6 +17,9 @@ cd $ROOT
 cellranger aggr \
 --id=Aggregate \
 --csv=$SAMPLESHEET_H5 
+
+# convert gene expression matrix from sparse format MEX to dense format .csv
+cellranger mat2csv $MATRIX_DIRECTORY $MATRIX_DIRECTORY/Filtered_expression_matrix.csv
 
 # End time
 END=`date +%s`
