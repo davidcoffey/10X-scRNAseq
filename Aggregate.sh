@@ -16,7 +16,8 @@ module load cellranger
 cd $ROOT
 cellranger aggr \
 --id=Aggregate \
---csv=$SAMPLESHEET_H5 
+--csv=$SAMPLESHEET_H5 \
+--normalize=mapped
 
 # convert gene expression matrix from sparse format MEX to dense format .csv
 cellranger mat2csv $MATRIX_DIRECTORY $MATRIX_DIRECTORY/Filtered_expression_matrix.csv
