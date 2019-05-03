@@ -10,7 +10,7 @@
 
 # Start time
 START=`date +%s`
-echo Ran MakeFastQ.sh on `date +"%B %d, %Y at %r"`
+echo Ran Counts.sh on `date +"%B %d, %Y at %r"`
 
 module load cellranger
 cd $ROOT/Counts
