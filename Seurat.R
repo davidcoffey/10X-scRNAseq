@@ -1,6 +1,6 @@
 # Secondary analysis using Seurat
 # Yuexin Xu yxu2@fredhutch.org
-# Updated April 23, 2019
+# Updated May 2, 2019
 
 ## Prerequisites
 # Install R
