@@ -59,8 +59,6 @@ ggsave(paste(Sys.getenv("ROOT"), sep = "/Seurat/", "PC1_PC2_scatterplot.pdf"))
 pbmc <- RunTSNE(object = pbmc, dims = 1:30, verbose = FALSE)
 write.csv(Embeddings(object = pbmc, reduction = "tsne"), 
           file = paste(Sys.getenv("ROOT"), sep = "/Projections/","tSNECoordinates_cell_seurat.csv"))
-write.csv(Loadings(object = pbmc, reduction = "tsne"), 
-          paste(Sys.getenv("ROOT"), sep = "/Projections/", "tSNECoordinates_gene_seurat.csv"))
 DimPlot(object = pbmc, reduction = "tsne")
 ggsave(paste(Sys.getenv("ROOT"), sep = "/Seurat/", "tSNE_scatterplot.pdf"))
 
@@ -68,7 +66,5 @@ ggsave(paste(Sys.getenv("ROOT"), sep = "/Seurat/", "tSNE_scatterplot.pdf"))
 pbmc <- RunUMAP(pbmc, dims = 1:30, verbose = FALSE)
 write.csv(Embeddings(object = pbmc, reduction = "umap"), 
           file = paste(Sys.getenv("ROOT"), sep = "/Projections/","uMAPCoordinates_cell_seurat.csv"))
-write.csv(Loadings(object = pbmc, reduction = "umap"), 
-          paste(Sys.getenv("ROOT"), sep = "/Projections/", "uMAPCoordinates_gene_seurat.csv"))
 DimPlot(object = pbmc, reduction = "umap")
 ggsave(paste(Sys.getenv("ROOT"), sep = "/Seurat/", "uMAP_scatterplot.pdf"))
