@@ -13,7 +13,7 @@ export REFERENCE="/shared/silo_researcher/Warren_E/ngs/ReferenceGenomes/Human_ge
 export SAMPLES="201687_6B_0 202823_6P_0 333196_6B_1 333224_6P_1"
 export SAMPLESHEET_H5="$ROOT/SampleSheet/AH7273DRXX_H5_samples.csv"
 export MATRIX_DIRECTORY="$ROOT/Aggregate/outs/filtered_feature_bc_matrix"
-export MATRIX="$MATRIX_DIRECTORY/Filtered_feature_bc_matrix.csv"
+export MATRIX="$ROOT/Matrices/Filtered_expression_matrix.csv"
 export MAGIC="$ROOT/MAGIC"
 
 # Make directories
@@ -22,6 +22,9 @@ mkdir -p $FASTQ_DIRECTORY
 mkdir -p $SCRATCH
 mkdir -p $ROOT/Counts
 mkdir -p $ROOT/MAGIC
+mkdir -p $ROOT/Matrices
+mkdir -p $ROOT/Projections
+mkdir -p $ROOT/Seurat
 
 # Convert BCL files to FASTQ files
 sbatch -n 1 -c 4 -t 1-0 --job-name="BLC2FASTQ" --output=$ROOT/Logs/MakeFastQ.log $ROOT/Scripts/MakeFastQ.sh
