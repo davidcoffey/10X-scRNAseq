@@ -11,6 +11,7 @@ export GE_REFERENCE="/shared/silo_researcher/Warren_E/ngs/ReferenceGenomes/Human
 export VDJ_REFERENCE="/shared/silo_researcher/Warren_E/ngs/ReferenceGenomes/Human_genomes/refdata-cellranger-vdj-GRCh38-alts-ensembl-2.0.0"
 export GE_SAMPLES="201687_6B_0 202823_6P_0 333196_6B_1 333224_6P_1"
 export VDJ_SAMPLES="201687_6B_0_TCR 202823_6P_0_TCR 333196_6B_1_TCR 333224_6P_1_TCR 201687_6B_0_BCR 202823_6P_0_BCR 333196_6B_1_BCR 333224_6P_1_BCR"
+export MATRIX="$ROOT/Aggregate_unnormalized/outs/filtered_feature_bc_matrix/Filtered_expression_matrix.csv"
 export MAGIC="$ROOT/MAGIC"
 
 # Make directories
@@ -19,6 +20,9 @@ mkdir -p $SCRATCH
 mkdir -p $ROOT/Counts
 mkdir -p $ROOT/VDJ
 mkdir -p $ROOT/MAGIC
+mkdir -p $ROOT/Matrices
+mkdir -p $ROOT/Projections
+mkdir -p $ROOT/Seurat
 
 ############# GE Pipeline #############
 
