@@ -1,7 +1,12 @@
 # 10X scRNAseq Pipeline v1.0
-#### Updated April 19, 2019
+#### Updated May 4, 2019
 These are a series of shell and R scripts used to process single cell RNAseq files using the 10X Genomics library construction kit.
 
-The general sequence that the files are run in are as follows:
+For 5' gene expression, the general sequence that the files are run in are as follows:
 1. MakeFastQ.sh
 2. Counts.sh
+3. Aggregate.sh
+
+For V(D)J analysis, the general sequence that the files are run in are as follows:
+1. MakeFastQ.sh
+2. VDJ.sh
