@@ -1,25 +1,25 @@
 #!/bin/bash
-# Generate single cell gene counts
+# Generate single-cell V(D)J sequences
 # David Coffey dcoffey@fredhutch.org
-# Updated April 20, 2019
+# Updated May 4, 2019
 
 # Varaibles
 #export SAMPLE=""
 #export FASTQ_DIRECTORY=""
-#export GE_REFERENCE=""
+#export VDJ_REFERENCE=""
 
 # Start time
 START=`date +%s`
-echo Ran Counts.sh on `date +"%B %d, %Y at %r"`
+echo Ran VDJ.sh on `date +"%B %d, %Y at %r"`
 
 module load cellranger
-cd $ROOT/Counts
-cellranger count \
+cd $ROOT/VDJ
+cellranger vdj \
 --id=$SAMPLE \
---transcriptome=$GE_REFERENCE \
+--reference=$VDJ_REFERENCE \
 --fastqs=$FASTQ_DIRECTORY \
 --sample=$SAMPLE \
---expect-cells=10000
+--chain=auto
 
 # End time
 END=`date +%s`
