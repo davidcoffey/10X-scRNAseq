@@ -31,6 +31,7 @@ mkdir -p $ROOT/Links/Clonotypes
 mkdir -p $ROOT/Links/Consensus_annotations
 mkdir -p $ROOT/Links/Filtered_contig_annotations
 mkdir -p $ROOT/Links/Metrics_summary
+mkdir -p $ROOT/Links/GE_filtered_feature_bc_matrix
 
 ############# GE Pipeline #############
 
@@ -63,6 +64,7 @@ for S in ${GE_SAMPLES}; do
   find $ROOT/Counts/${S}/outs -name "web_summary.html" -type f -exec ln -s {} $ROOT/Links/Web_summary/${S}.web_summary.html ';'
   find $ROOT/Counts/${S}/outs -name "cloupe.cloupe" -type f -exec ln -s {} $ROOT/Links/Cloupe/${S}.cloupe ';'
   find $ROOT/Counts/${S}/outs -name "metrics_summary.csv" -type f -exec ln -s {} $ROOT/Links/Metrics_summary/${S}.metrics_summary.csv ';'
+  find $ROOT/Counts/${S}/outs -name "filtered_feature_bc_matrix.h5" -type f -exec ln -s {} $ROOT/Links/GE_filtered_feature_bc_matrix/${S}.filtered_feature_bc_matrix.h5 ';'
 done
 
 find $ROOT/Aggregate_normalized/outs -name "metrics_summary.csv" -type f -exec ln -s {} $ROOT/Links/Metrics_summary/Aggregate_normalized.metrics_summary.csv ';'
