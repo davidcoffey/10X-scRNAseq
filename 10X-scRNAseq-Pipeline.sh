@@ -73,6 +73,10 @@ find $ROOT/Aggregate_normalized/outs -name "web_summary.html" -type f -exec ln -
 find $ROOT/Aggregate_unnormalized/outs -name "web_summary.html" -type f -exec ln -s {} $ROOT/Links/Web_summary/Aggregate_unnormalized.web_summary.html ';'
 find $ROOT/Aggregate_normalized/outs -name "cloupe.cloupe" -type f -exec ln -s {} $ROOT/Links/Cloupe/Aggregate_normalized.cloupe ';'
 find $ROOT/Aggregate_unnormalized/outs -name "cloupe.cloupe" -type f -exec ln -s {} $ROOT/Links/Cloupe/Aggregate_unnormalized.cloupe ';'
+find $ROOT/Aggregate_normalized/outs -name "filtered_feature_bc_matrix.h5" -type f -exec ln -s {} $ROOT/Links/GE_filtered_feature_bc_matrix/Aggregate_normalized.filtered_feature_bc_matrix.h5 ';'
+find $ROOT/Aggregate_unnormalized/outs -name "filtered_feature_bc_matrix.h5" -type f -exec ln -s {} $ROOT/Links/GE_filtered_feature_bc_matrix/Aggregate_unnormalized.filtered_feature_bc_matrix.h5 ';'
+
+
 
 # Secondary data filtering using MAGIC in R
 sbatch -n 1 -c 4 -t 1-0 --job-name="MAGIC" --wrap="Rscript $ROOT/Scripts/MAGIC.R" --output=$ROOT/Logs/MAGIC.log
