@@ -6,6 +6,9 @@ library(plyr)
 library(dplyr)
 library(data.table)
 library(ggplot2)
+library(plotly)
+library(pheatmap)
+library(UpSetR)
 
 root = "/Volumes/homes/Warren_FAST/users/dcoffey/scRNAseq/10X041619/Links"
 
@@ -36,14 +39,35 @@ names(metrics.summary) = gsub(x = basename(files), pattern = ".metrics_summary.c
 metrics.summary = ldply(metrics.summary, data.frame, .id = "sample")
 
 # Receptor chain distribution by sample
-sample.chain = data.table(table(filtered.contig.annotations$Sample, filtered.contig.annotations$chain))
-names(sample.chain) = c("sample", "chain", "count")
+sample.chain.counts = data.table(table(filtered.contig.annotations$sample, filtered.contig.annotations$chain))
+names(sample.chain.counts) = c("sample", "chain", "count")
 
-ggplot(sample.chain, aes(x = sample, y = count, fill = chain)) +
+ggplot(sample.chain.counts, aes(x = sample, y = count, fill = chain)) +
   geom_bar(stat = "identity") +
   scale_fill_brewer(palette = "Set1") +
   labs(x = "", y = "Clonotypes", fill = "Chain")
 
-sample.chain.group = group_by(sample.chain, sample, chain)
-sample.chain.sum = summarise(sample.chain.group, sum = sum(count), ecdf = ecdf(count)(unique(sample)))
+sample.chain.proportional = data.frame(prop.table(table(filtered.contig.annotations$sample, filtered.contig.annotations$chain), 1))
+names(sample.chain.proportional) = c("sample", "chain", "proportion")
+
+ggplot(sample.chain.proportional, aes(x = sample, y = proportion, fill = chain)) +
+  geom_bar(stat = "identity") +
+  scale_fill_brewer(palette = "Set1") +
+  scale_x_discrete(limits = c("201687_6B_0_BCR", "202823_6P_0_BCR", "333196_6B_1_BCR",  "333224_6P_1_BCR",
+                              "333196_6B_1_TCR", "201687_6B_0_TCR", "202823_6P_0_TCR", "333224_6P_1_TCR")) +
+  #scale_x_discrete(limits = c("201687_6B_0_BCR", "333196_6B_1_BCR", "202823_6P_0_BCR", "333224_6P_1_BCR",
+  #                            "201687_6B_0_TCR", "333196_6B_1_TCR", "202823_6P_0_TCR", "333224_6P_1_TCR")) +
+  labs(x = "", y = "Clonotypes", fill = "Chain")
+
+# Look for T and B cells that share the same barcode
+filtered.contig.annotations$library = ifelse(grepl(filtered.contig.annotations$sample, pattern = "BCR"), "BCR", "TCR")
+shared.barcodes = intersect(filtered.contig.annotations[filtered.contig.annotations$library == "BCR", "barcode"], filtered.contig.annotations[filtered.contig.annotations$library == "TCR", "barcode"])
+filtered.contig.annotations.shared = filtered.contig.annotations[filtered.contig.annotations$barcode %in% shared.barcodes,]
+matrix.shared = as.data.frame.matrix(table(filtered.contig.annotations.shared$barcode, filtered.contig.annotations.shared$sample))
+
+pheatmap(matrix.shared, show_rownames = FALSE)
+
+matrix.shared[matrix.shared > 0] <- 1
+upset(data = matrix.shared)
+
 

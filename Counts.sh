@@ -13,13 +13,14 @@ START=`date +%s`
 echo Ran Counts.sh on `date +"%B %d, %Y at %r"`
 
 module load cellranger
-cd $ROOT/Counts
+#cd $ROOT/Counts
 cellranger count \
 --id=$SAMPLE \
 --transcriptome=$GE_REFERENCE \
 --fastqs=$FASTQ_DIRECTORY \
 --sample=$SAMPLE \
---expect-cells=10000
+--expect-cells=10000 \
+--chemistry=fiveprime
 
 # End time
 END=`date +%s`

@@ -13,7 +13,7 @@ echo Ran Aggregate.sh on `date +"%B %d, %Y at %r"`
 
 # Aggregate samples and normalize (subsample reads from higher-depth GEM wells until they all have an equal number of confidently mapped reads per cell)
 module load cellranger 
-cd $ROOT
+cd $ROOT/Counts/Aggregate
 cellranger aggr \
 --id=Aggregate_normalized \
 --csv=$SAMPLESHEET_H5 \
