@@ -12,6 +12,7 @@
 START=`date +%s`
 echo Ran MakeFastQ.sh on `date +"%B %d, %Y at %r"`
 
+cd $FASTQ_DIRECTORY
 module load cellranger
 cellranger mkfastq \
 --run=$BCL_DIRECTORY \

@@ -6,17 +6,17 @@
 # Varaibles
 #export SAMPLE=""
 #export FASTQ_DIRECTORY=""
-#export GE_REFERENCE=""
+#export GEX_REFERENCE=""
 
 # Start time
 START=`date +%s`
 echo Ran Counts.sh on `date +"%B %d, %Y at %r"`
 
 module load cellranger
-#cd $ROOT/Counts
+cd $ROOT/Counts
 cellranger count \
 --id=$SAMPLE \
---transcriptome=$GE_REFERENCE \
+--transcriptome=$GEX_REFERENCE \
 --fastqs=$FASTQ_DIRECTORY \
 --sample=$SAMPLE \
 --expect-cells=10000 \
