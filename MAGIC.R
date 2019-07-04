@@ -7,7 +7,7 @@
 if (!require(viridis)) install.packages("viridis")
 if (!require(readr)) install.packages("readr")
 if (!require(phateR)) install.packages("phateR")
-install.packages("Rmagic")
+if (!require(Rmagic)) install.packages("Rmagic")
 
 ## Enviranmental Variables
 #export MATRIX="$MATRIX_DIRECTORY/Filtered_feature_bc_matrix.csv"

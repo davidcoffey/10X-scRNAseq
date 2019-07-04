@@ -5,19 +5,17 @@
 
 # Define universal variables
 export ROOT="/fh/fast/warren_h/users/dcoffey/scRNAseq/10X062719"
-export SCRATCH="/fh/scratch/delete30/warren_h/dcoffey/scRNAseq/10X062719"
 export BCL_DIRECTORY="/fh/fast/warren_h/SR/ngs/illumina/dcoffey/190626_A00613_0040_AHK72HDMXX"
 export FASTQ_DIRECTORY="$ROOT/Fastq/GEX"
 export SAMPLESHEET="$ROOT/SampleSheet/HK72HDMXX_062719.csv"
 export SAMPLESHEET_H5="$ROOT/SampleSheet/HK72HDMXX_H5_samples.csv"
-export GEX_SAMPLES="229311_28P_0 239971_39P_0 242967_37P_0 258022_44P_0 293138_60P_0 298865_28P_1 301920_37P_1 302197_72P_0 311502_77P_0 317634_79P_0 325592_60P_1 341576_79P_1 354841_44P_1 376714_72P_1 383328_39P_1 383693_77P_1 229311_28P_0 239971_39P_0 242967_37P_0 258022_44P_0 293138_60P_0 298865_28P_1 301920_37P_1 302197_72P_0 311502_77P_0 317634_79P_0 325592_60P_1 341576_79P_1 354841_44P_1 376714_72P_1 383328_39P_1 383693_77P_1"
+export GEX_SAMPLES="229311_28P_0 239971_39P_0 242967_37P_0 258022_44P_0 293138_60P_0 298865_28P_1 301920_37P_1 302197_72P_0 311502_77P_0 317634_79P_0 325592_60P_1 341576_79P_1 354841_44P_1 376714_72P_1 383328_39P_1 383693_77P_1"
 export GEX_REFERENCE="/shared/silo_researcher/Warren_E/ngs/ReferenceGenomes/Human_genomes/refdata-cellranger-hg19-3.0.0"
 export MATRIX="$ROOT/Aggregate_unnormalized/outs/filtered_feature_bc_matrix/Filtered_expression_matrix.csv"
 export MAGIC="$ROOT/MAGIC"
 
 # Make directories
 mkdir -p $ROOT/Logs
-mkdir -p $SCRATCH
 mkdir -p $ROOT/Counts
 mkdir -p $ROOT/MAGIC
 mkdir -p $ROOT/Matrices
@@ -48,7 +46,7 @@ sbatch -n 1 -c 4 -t 1-0 --job-name="AGGREGATE" --dependency=afterany:${COUNTS%?}
 AGGREGATE=$(squeue -o "%A" -h -u dcoffey -n "AGGREGATE" -S i | tr "\n" ":")
 
 # Secondary data filtering using MAGIC in R
-sbatch -n 1 -c 4 -t 1-0 --job-name="MAGIC" --dependency=afterany:${COUNTS%?} --wrap="Rscript $ROOT/Scripts/MAGIC.R" --output=$ROOT/Logs/MAGIC.log
+sbatch -n 1 -c 4 -t 1-0 --job-name="MAGIC" --dependency=afterany:${AGGREGATE%?} --wrap="ml R/3.6.0-foss-2016b-fh1\ Rscript $ROOT/Scripts/MAGIC.R" --output=$ROOT/Logs/MAGIC.log
 
 # Create symbolic link for GEX files
 for S in ${GEX_SAMPLES}; do
@@ -57,10 +55,11 @@ for S in ${GEX_SAMPLES}; do
   find $ROOT/Counts/${S}/outs -name "metrics_summary.csv" -type f -exec ln -s {} $ROOT/Links/Metrics_summary/${S}.metrics_summary.csv ';'
 done
 
-find $ROOT/Counts/Aggregate/Aggregate_normalized/outs -name "metrics_summary.csv" -type f -exec ln -s {} $ROOT/Links/Metrics_summary/Aggregate_normalized.metrics_summary.csv ';'
-find $ROOT/Counts/Aggregate/Aggregate_unnormalized/outs -name "metrics_summary.csv" -type f -exec ln -s {} $ROOT/Links/Metrics_summary/Aggregate_unnormalized.metrics_summary.csv ';'
-find $ROOT/Counts/Aggregate/Aggregate_normalized/outs -name "web_summary.html" -type f -exec ln -s {} $ROOT/Links/Web_summary/Aggregate_normalized.web_summary.html ';'
-find $ROOT/Counts/Aggregate/Aggregate_unnormalized/outs -name "web_summary.html" -type f -exec ln -s {} $ROOT/Links/Web_summary/Aggregate_unnormalized.web_summary.html ';'
-find $ROOT/Counts/Aggregate/Aggregate_normalized/outs -name "cloupe.cloupe" -type f -exec ln -s {} $ROOT/Links/Cloupe/Aggregate_normalized.cloupe ';'
-find $ROOT/Counts/Aggregate/Aggregate_unnormalized/outs -name "cloupe.cloupe" -type f -exec ln -s {} $ROOT/Links/Cloupe/Aggregate_unnormalized.cloupe ';'
+find $ROOT/Counts/Aggregate_normalized/outs -name "metrics_summary.csv" -type f -exec ln -s {} $ROOT/Links/Metrics_summary/Aggregate_normalized.metrics_summary.csv ';'
+find $ROOT/Counts/Aggregate_unnormalized/outs -name "metrics_summary.csv" -type f -exec ln -s {} $ROOT/Links/Metrics_summary/Aggregate_unnormalized.metrics_summary.csv ';'
+find $ROOT/Counts/Aggregate_normalized/outs -name "web_summary.html" -type f -exec ln -s {} $ROOT/Links/Web_summary/Aggregate_normalized.web_summary.html ';'
+find $ROOT/Counts/Aggregate_unnormalized/outs -name "web_summary.html" -type f -exec ln -s {} $ROOT/Links/Web_summary/Aggregate_unnormalized.web_summary.html ';'
+find $ROOT/Counts/Aggregate_normalized/outs -name "cloupe.cloupe" -type f -exec ln -s {} $ROOT/Links/Cloupe/Aggregate_normalized.cloupe ';'
+find $ROOT/Counts/Aggregate_unnormalized/outs -name "cloupe.cloupe" -type f -exec ln -s {} $ROOT/Links/Cloupe/Aggregate_unnormalized.cloupe ';'
+
 
