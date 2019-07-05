@@ -48,6 +48,9 @@ AGGREGATE=$(squeue -o "%A" -h -u dcoffey -n "AGGREGATE" -S i | tr "\n" ":")
 # Secondary data filtering using MAGIC in R
 sbatch -n 1 -c 4 -t 1-0 --job-name="MAGIC" --dependency=afterany:${AGGREGATE%?} --wrap="ml R/3.6.0-foss-2016b-fh1\ Rscript $ROOT/Scripts/MAGIC.R" --output=$ROOT/Logs/MAGIC.log
 
+# Combine gene expression metrics
+sbatch -n 1 -c 4 -t 1-0 --job-name="COMBINE" --dependency=afterany:${AGGREGATE%?} --wrap="Rscript $ROOT/Scripts/CombineGEXmetrics.R" --output=$ROOT/Logs/MAGIC.log
+
 # Create symbolic link for GEX files
 for S in ${GEX_SAMPLES}; do
   find $ROOT/Counts/${S}/outs -name "web_summary.html" -type f -exec ln -s {} $ROOT/Links/Web_summary/${S}.web_summary.html ';'

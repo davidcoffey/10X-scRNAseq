@@ -5,7 +5,6 @@
 
 # Define universal variables
 export ROOT="/fh/fast/warren_h/users/dcoffey/scRNAseq/10X041619"
-export SCRATCH="/fh/scratch/delete30/warren_h/dcoffey/scRNAseq/10X041619"
 export BCL_DIRECTORY="/fh/fast/warren_h/SR/ngs/illumina/dcoffey/190416_A00613_0023_AH7273DRXX"
 export FASTQ_DIRECTORY="$ROOT/Fastq/GEX"
 export SAMPLESHEET="$ROOT/SampleSheet/AH7273DRXX_041619.csv"
@@ -17,7 +16,6 @@ export MAGIC="$ROOT/MAGIC"
 
 # Make directories
 mkdir -p $ROOT/Logs
-mkdir -p $SCRATCH
 mkdir -p $ROOT/Counts
 mkdir -p $ROOT/MAGIC
 mkdir -p $ROOT/Matrices
@@ -48,7 +46,10 @@ sbatch -n 1 -c 4 -t 1-0 --job-name="AGGREGATE" --dependency=afterany:${COUNTS%?}
 AGGREGATE=$(squeue -o "%A" -h -u dcoffey -n "AGGREGATE" -S i | tr "\n" ":")
 
 # Secondary data filtering using MAGIC in R
-sbatch -n 1 -c 4 -t 1-0 --job-name="MAGIC" --dependency=afterany:${COUNTS%?} --wrap="Rscript $ROOT/Scripts/MAGIC.R" --output=$ROOT/Logs/MAGIC.log
+sbatch -n 1 -c 4 -t 1-0 --job-name="MAGIC" --dependency=afterany:${AGGREGATE%?} --wrap="Rscript $ROOT/Scripts/MAGIC.R" --output=$ROOT/Logs/MAGIC.log
+
+# Combine gene expression metrics
+sbatch -n 1 -c 4 -t 1-0 --job-name="COMBINE" --dependency=afterany:${AGGREGATE%?} --wrap="Rscript $ROOT/Scripts/CombineGEXmetrics.R" --output=$ROOT/Logs/MAGIC.log
 
 # Create symbolic link for GEX files
 for S in ${GEX_SAMPLES}; do
