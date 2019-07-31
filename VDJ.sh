@@ -18,8 +18,7 @@ cellranger vdj \
 --id=$SAMPLE \
 --reference=$VDJ_REFERENCE \
 --fastqs=$FASTQ_DIRECTORY \
---sample=$SAMPLE \
---chain=auto
+--sample=$SAMPLE
 
 # End time
 END=`date +%s`

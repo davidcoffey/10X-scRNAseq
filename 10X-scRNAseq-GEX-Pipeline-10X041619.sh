@@ -18,13 +18,13 @@ export MAGIC="$ROOT/MAGIC"
 mkdir -p $ROOT/Logs
 mkdir -p $ROOT/Counts
 mkdir -p $ROOT/MAGIC
-mkdir -p $ROOT/Matrices
 mkdir -p $ROOT/Projections
 mkdir -p $ROOT/Seurat
 mkdir -p $ROOT/Links/Cloupe
 mkdir -p $ROOT/Links/Web_summary
 mkdir -p $ROOT/Links/Metrics_summary
 mkdir -p $ROOT/Links/Combined
+mkdir -p $ROOT/Links/Expression_matrix
 
 # Convert 5' GEX BCL files to FASTQ files
 mkdir -p $FASTQ_DIRECTORY
@@ -56,6 +56,7 @@ for S in ${GEX_SAMPLES}; do
   find $ROOT/Counts/${S}/outs -name "web_summary.html" -type f -exec ln -s {} $ROOT/Links/Web_summary/${S}.web_summary.html ';'
   find $ROOT/Counts/${S}/outs -name "cloupe.cloupe" -type f -exec ln -s {} $ROOT/Links/Cloupe/${S}.cloupe ';'
   find $ROOT/Counts/${S}/outs -name "metrics_summary.csv" -type f -exec ln -s {} $ROOT/Links/Metrics_summary/${S}.metrics_summary.csv ';'
+  find $ROOT/Counts/${S}/outs -name "raw_feature_bc_matrix.h5" -type f -exec ln -s {} $ROOT/Links/Expression_matrix/${S}.raw_feature_bc_matrix.h5 ';'
 done
 
 find $ROOT/Counts/Aggregate_normalized/outs -name "metrics_summary.csv" -type f -exec ln -s {} $ROOT/Links/Metrics_summary/Aggregate_normalized.metrics_summary.csv ';'
@@ -64,3 +65,5 @@ find $ROOT/Counts/Aggregate_normalized/outs -name "web_summary.html" -type f -ex
 find $ROOT/Counts/Aggregate_unnormalized/outs -name "web_summary.html" -type f -exec ln -s {} $ROOT/Links/Web_summary/Aggregate_unnormalized.web_summary.html ';'
 find $ROOT/Counts/Aggregate_normalized/outs -name "cloupe.cloupe" -type f -exec ln -s {} $ROOT/Links/Cloupe/Aggregate_normalized.cloupe ';'
 find $ROOT/Counts/Aggregate_unnormalized/outs -name "cloupe.cloupe" -type f -exec ln -s {} $ROOT/Links/Cloupe/Aggregate_unnormalized.cloupe ';'
+find $ROOT/Counts/Aggregate_unnormalized/outs -name "raw_feature_bc_matrix.h5" -type f -exec ln -s {} $ROOT/Links/Expression_matrix/Aggregate_unnormalized.raw_feature_bc_matrix.h5 ';'
+find $ROOT/Counts/Aggregate_normalized/outs -name "raw_feature_bc_matrix.h5" -type f -exec ln -s {} $ROOT/Links/Expression_matrix/Aggregate_normalized.raw_feature_bc_matrix.h5 ';'
