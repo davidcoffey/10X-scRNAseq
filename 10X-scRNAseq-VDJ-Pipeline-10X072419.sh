@@ -18,6 +18,8 @@ mkdir -p $ROOT/Links/All_contig_annotations
 mkdir -p $ROOT/Links/Clonotypes
 mkdir -p $ROOT/Links/Consensus_annotations
 mkdir -p $ROOT/Links/Filtered_contig_annotations
+mkdir -p $ROOT/Links/Web_summary
+mkdir -p $ROOT/Links/Metrics_summary
 
 # Convert V(D)J BCL files to FASTQ files
 mkdir -p $FASTQ_DIRECTORY

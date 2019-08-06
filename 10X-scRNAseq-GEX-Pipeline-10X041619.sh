@@ -5,7 +5,7 @@
 
 # Define universal variables
 export ROOT="/fh/fast/warren_h/users/dcoffey/scRNAseq/10X041619"
-export BCL_DIRECTORY="/fh/fast/warren_h/SR/ngs/illumina/dcoffey/190416_A00613_0023_AH7273DRXX"
+export BCL_DIRECTORY="/fh/fast/warren_h/SR/ngs/illumina/dcoffey/190416_A00613_0023_AH7273DRXX/Raw"
 export FASTQ_DIRECTORY="$ROOT/Fastq/GEX"
 export SAMPLESHEET="$ROOT/SampleSheet/AH7273DRXX_041619.csv"
 export SAMPLESHEET_H5="$ROOT/SampleSheet/AH7273DRXX_H5_samples.csv"
@@ -28,28 +28,28 @@ mkdir -p $ROOT/Links/Expression_matrix
 
 # Convert 5' GEX BCL files to FASTQ files
 mkdir -p $FASTQ_DIRECTORY
-sbatch -n 1 -c 4 -t 1-0 --job-name="MKFASTQ" --output=$ROOT/Logs/MakeFastQ-GE.log $ROOT/Scripts/MakeFastQ.sh
+sbatch -n 1 -t 1-0 -c 4 --job-name="MKFASTQ" --output=$ROOT/Logs/MakeFastQ-GE.log $ROOT/Scripts/MakeFastQ.sh
 MKFASTQ=$(squeue -o "%A" -h -u dcoffey -n "MKFASTQ" -S i | tr "\n" ":")
 
 # Generate single cell gene counts
 for S in ${GEX_SAMPLES}; do
     echo ${S}
     export SAMPLE=${S}
-    sbatch -n 1 -c 4 -t 3-0 --job-name="COUNTS" --dependency=afterany:${MKFASTQ%?} --output=$ROOT/Logs/Counts.${S}.log $ROOT/Scripts/Counts.sh
+    sbatch -n 1 -t 1-0 -c 4 --job-name="COUNTS" --dependency=afterany:${MKFASTQ%?} --output=$ROOT/Logs/Counts.${S}.log $ROOT/Scripts/Counts.sh
 done
 
 COUNTS=$(squeue -o "%A" -h -u dcoffey -n "COUNTS" -S i | tr "\n" ":")
 
 # Aggregate samples to one gene counts matrix
-sbatch -n 1 -c 4 -t 1-0 --job-name="AGGREGATE" --dependency=afterany:${COUNTS%?} --output=$ROOT/Logs/Aggregate.log $ROOT/Scripts/Aggregate.sh
+sbatch -n 1 -t 1-0 -c 4 --job-name="AGGREGATE" --dependency=afterany:${COUNTS%?} --output=$ROOT/Logs/Aggregate.log $ROOT/Scripts/Aggregate.sh
 
 AGGREGATE=$(squeue -o "%A" -h -u dcoffey -n "AGGREGATE" -S i | tr "\n" ":")
 
 # Secondary data filtering using MAGIC in R
-sbatch -n 1 -c 4 -t 1-0 --job-name="MAGIC" --dependency=afterany:${AGGREGATE%?} --wrap="Rscript $ROOT/Scripts/MAGIC.R" --output=$ROOT/Logs/MAGIC.log
+sbatch -n 1 -t 1-0 -c 4 --job-name="MAGIC" --dependency=afterany:${AGGREGATE%?} --wrap="Rscript $ROOT/Scripts/MAGIC.R" --output=$ROOT/Logs/MAGIC.log
 
 # Combine gene expression metrics
-sbatch -n 1 -c 4 -t 1-0 --job-name="COMBINE" --dependency=afterany:${AGGREGATE%?} --wrap="Rscript $ROOT/Scripts/CombineGEXmetrics.R" --output=$ROOT/Logs/MAGIC.log
+sbatch -n 1 -t 1-0 -c 4 --job-name="COMBINE" --dependency=afterany:${AGGREGATE%?} --wrap="Rscript $ROOT/Scripts/CombineGEXmetrics.R" --output=$ROOT/Logs/MAGIC.log
 
 # Create symbolic link for GEX files
 for S in ${GEX_SAMPLES}; do

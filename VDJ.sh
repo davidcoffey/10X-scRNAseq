@@ -1,7 +1,7 @@
 #!/bin/bash
 # Generate single-cell V(D)J sequences
 # David Coffey dcoffey@fredhutch.org
-# Updated May 4, 2019
+# Updated July 30, 2019
 
 # Varaibles
 #export SAMPLE=""
