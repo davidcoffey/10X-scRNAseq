@@ -64,10 +64,22 @@ write.csv(clonotype.contigs, file = paste(path, "/Combined/", run, "_clonotype_c
 
 # Spread CDR3 across chains by barcode and clonotype
 aggregate.chains = aggregate(data = clonotype.contigs, cdr3~library+SampleID+raw_clonotype_id+chain+barcode, paste, collapse = ",")
-aggregate.chains.count = aggregate(data = clonotype.contigs, cdr3~library+raw_clonotype_id+SampleID+chain+barcode, length)
-names(aggregate.chains.count)[6] = "multi_chain"
-aggregate.chains = merge(aggregate.chains, aggregate.chains.count)
 spread.chains = spread(aggregate.chains, chain, cdr3, fill= "")
+
+# Mark doublets (defined as BCR and TCR contig identified for the same barcode within the same sample)
 spread.chains$doublet = ifelse((spread.chains$IGH != "" | spread.chains$IGK != "" | spread.chains$IGL != "") &
                                  (spread.chains$TRB != "" | spread.chains$TRA != ""), TRUE, FALSE)
-write.csv(spread.chains, file = paste(path, "/Combined/", run, "_clonotype_contigs_one_clone_per_row.csv", sep = ""), row.names = FALSE)
+aggregate.barcodes = data.frame(table(spread.chains$SampleID, spread.chains$barcode))
+doublets = aggregate.barcodes[aggregate.barcodes$Freq > 1,]
+spread.chains$doublet = ifelse((spread.chains$SampleID %in% doublets$Var1 & spread.chains$barcode %in% doublets$Var2) |
+                                 (spread.chains$IGH != "" | spread.chains$IGK != "" | spread.chains$IGL != "") &
+                                 (spread.chains$TRB != "" | spread.chains$TRA != ""), TRUE, FALSE)
+
+# Mark multi-chain receptors (defined as a TCR or BCR with more than one chain of the same type)
+spread.chains$multi_chain = ifelse(grepl(spread.chains$IGH, pattern = ",") | 
+                                     grepl(spread.chains$IGK, pattern = ",") | 
+                                     grepl(spread.chains$IGL, pattern = ",") |
+                                     grepl(spread.chains$TRB, pattern = ",") |
+                                     grepl(spread.chains$TRA, pattern = ","), TRUE, FALSE)
+
+write.csv(spread.chains, file = paste(path, "/Combined/", run, "_clonotype_contigs_one_cell_per_row.csv", sep = ""), row.names = FALSE)
