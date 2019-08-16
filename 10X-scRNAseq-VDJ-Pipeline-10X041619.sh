@@ -9,7 +9,7 @@ export SCRATCH="/fh/scratch/delete30/warren_h/dcoffey/scRNAseq/10X041619"
 export BCL_DIRECTORY="/fh/fast/warren_h/SR/ngs/illumina/dcoffey/190501_A00613_0028_AH7FF2DRXX/Raw"
 export FASTQ_DIRECTORY="$ROOT/Fastq/VDJ"
 export SAMPLESHEET="$ROOT/SampleSheet/AH7FF2DRXX_050319.csv"
-export VDJ_REFERENCE="/shared/silo_researcher/Warren_E/ngs/ReferenceGenomes/Human_genomes/refdata-cellranger-vdj-GRCh38-alts-ensembl-2.0.0"
+export VDJ_REFERENCE="/shared/silo_researcher/Warren_E/ngs/ReferenceGenomes/Human_genomes/refdata-cellranger-vdj-GRCh38-alts-ensembl-3.1.0"
 export VDJ_SAMPLES="201687_6B_0_TCR 202823_6P_0_TCR 333196_6B_1_TCR 333224_6P_1_TCR 201687_6B_0_BCR 202823_6P_0_BCR 333196_6B_1_BCR 333224_6P_1_BCR"
 
 # Make directories
