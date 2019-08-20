@@ -35,9 +35,11 @@ AGGREGATE=$(squeue -o "%A" -h -u dcoffey -n "AGGREGATE" -S i | tr "\n" ":")
 sbatch -n 1 -c 4 -t 1-0 --job-name="MAGIC" --dependency=afterany:${AGGREGATE%?} --wrap="Rscript $ROOT/Scripts/MAGIC.R" --output=$ROOT/Logs/MAGIC.log
 
 # Combine gene expression metrics
+ml R/3.6.0-foss-2016b-fh1
 sbatch -n 1 -c 4 -t 1-0 --job-name="COMBINE" --dependency=afterany:${AGGREGATE%?} --wrap="Rscript $ROOT/Scripts/CombineGEXmetrics.R" --output=$ROOT/Logs/GEX_metrics.log
 
 # Combine gene expression metrics
+ml R/3.6.0-foss-2016b-fh1
 sbatch -n 1 -c 4 -t 1-0 --job-name="COMBINE" --dependency=afterany:${AGGREGATE%?} --wrap="Rscript $ROOT/Scripts/CombineVDJmetrics.R" --output=$ROOT/Logs/VDJ_metrics.log
 
 # Create symbolic link for GEX files
