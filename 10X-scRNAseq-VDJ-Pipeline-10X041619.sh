@@ -1,15 +1,14 @@
 #!/bin/bash
 # 10X scRNAseq Pipeline for V(D)J Analysis
 # David Coffey dcoffey@fredhutch.org
-# Updated July 2, 2019
+# Updated October 26, 2020
 
 # Define universal variables
 export ROOT="/fh/fast/warren_h/users/dcoffey/scRNAseq/10X041619"
-export SCRATCH="/fh/scratch/delete30/warren_h/dcoffey/scRNAseq/10X041619"
 export BCL_DIRECTORY="/fh/fast/warren_h/SR/ngs/illumina/dcoffey/190501_A00613_0028_AH7FF2DRXX/Raw"
 export FASTQ_DIRECTORY="$ROOT/Fastq/VDJ"
 export SAMPLESHEET="$ROOT/SampleSheet/AH7FF2DRXX_050319.csv"
-export VDJ_REFERENCE="/shared/silo_researcher/Warren_E/ngs/ReferenceGenomes/Human_genomes/refdata-cellranger-vdj-GRCh38-alts-ensembl-3.1.0"
+export VDJ_REFERENCE="/shared/silo_researcher/Warren_E/ngs/ReferenceGenomes/Human_genomes/refdata-cellranger-vdj-GRCh38-alts-ensembl-4.0.0"
 export VDJ_SAMPLES="201687_6B_0_TCR 202823_6P_0_TCR 333196_6B_1_TCR 333224_6P_1_TCR 201687_6B_0_BCR 202823_6P_0_BCR 333196_6B_1_BCR 333224_6P_1_BCR"
 
 # Make directories
@@ -24,7 +23,7 @@ mkdir -p $ROOT/Links/Web_summary
 
 # Convert V(D)J BCL files to FASTQ files
 mkdir -p $FASTQ_DIRECTORY
-sbatch -n 1 -c 4 -t 1-0 --job-name="MKFASTQ" --output=$ROOT/Logs/MakeFastQ-VDJ.log $ROOT/Scripts/MakeFastQ.sh
+sbatch -n 1 -t 1-0 -c 6 --mem 128G --job-name="MKFASTQ" --output=$ROOT/Logs/MakeFastQ-VDJ.log $ROOT/Scripts/MakeFastQ.sh
 
 MKFASTQ=$(squeue -o "%A" -h -u dcoffey -n "MKFASTQ" -S i | tr "\n" ":")
 
@@ -32,7 +31,7 @@ MKFASTQ=$(squeue -o "%A" -h -u dcoffey -n "MKFASTQ" -S i | tr "\n" ":")
 for S in ${VDJ_SAMPLES}; do
     echo ${S}
     export SAMPLE=${S}
-    sbatch -n 1 -c 4 -t 3-0 --job-name="VDJ" --dependency=afterany:${MKFASTQ%?} --output=$ROOT/Logs/VDJ.${S}.log $ROOT/Scripts/VDJ.sh
+    sbatch -n 1 -t 1-0 -c 6 --mem 128G --job-name="VDJ" --dependency=afterany:${MKFASTQ%?} --output=$ROOT/Logs/VDJ.${S}.log $ROOT/Scripts/VDJ.sh
 done
 
 VDJ=$(squeue -o "%A" -h -u dcoffey -n "VDJ" -S i | tr "\n" ":")

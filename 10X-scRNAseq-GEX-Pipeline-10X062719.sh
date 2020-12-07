@@ -1,7 +1,7 @@
 #!/bin/bash
 # 10X scRNAseq Pipeline for Gene Expression (GEX) Analysis
 # David Coffey dcoffey@fredhutch.org
-# Updated July 2, 2019
+# Updated October 26, 2020
 
 # Define universal variables
 export ROOT="/fh/fast/warren_h/users/dcoffey/scRNAseq/10X062719"
@@ -10,16 +10,12 @@ export FASTQ_DIRECTORY="$ROOT/Fastq/GEX"
 export SAMPLESHEET="$ROOT/SampleSheet/HK72HDMXX_062719.csv"
 export SAMPLESHEET_H5="$ROOT/SampleSheet/HK72HDMXX_H5_samples.csv"
 export GEX_SAMPLES="229311_28P_0 239971_39P_0 242967_37P_0 258022_44P_0 293138_60P_0 298865_28P_1 301920_37P_1 302197_72P_0 311502_77P_0 317634_79P_0 325592_60P_1 341576_79P_1 354841_44P_1 376714_72P_1 383328_39P_1 383693_77P_1"
-export GEX_REFERENCE="/shared/silo_researcher/Warren_E/ngs/ReferenceGenomes/Human_genomes/refdata-cellranger-hg19-3.0.0"
+export GEX_REFERENCE="/shared/silo_researcher/Warren_E/ngs/ReferenceGenomes/Human_genomes/refdata-gex-GRCh38-2020-A"
 export MATRIX="$ROOT/Aggregate_unnormalized/outs/filtered_feature_bc_matrix/Filtered_expression_matrix.csv"
-export MAGIC="$ROOT/MAGIC"
 
 # Make directories
 mkdir -p $ROOT/Logs
 mkdir -p $ROOT/Counts
-mkdir -p $ROOT/MAGIC
-mkdir -p $ROOT/Projections
-mkdir -p $ROOT/Seurat
 mkdir -p $ROOT/Links/Cloupe
 mkdir -p $ROOT/Links/Web_summary
 mkdir -p $ROOT/Links/Metrics_summary
@@ -28,28 +24,26 @@ mkdir -p $ROOT/Links/Expression_matrix
 
 # Convert 5' GEX BCL files to FASTQ files
 mkdir -p $FASTQ_DIRECTORY
-sbatch -n 1 -c 4 -t 1-0 --job-name="MKFASTQ" --output=$ROOT/Logs/MakeFastQ-GE.log $ROOT/Scripts/MakeFastQ.sh
+sbatch -n 1 -t 1-0 -c 6 --mem 128G --job-name="MKFASTQ" --output=$ROOT/Logs/MakeFastQ-GE.log $ROOT/Scripts/MakeFastQ.sh
 MKFASTQ=$(squeue -o "%A" -h -u dcoffey -n "MKFASTQ" -S i | tr "\n" ":")
 
 # Generate single cell gene counts
 for S in ${GEX_SAMPLES}; do
     echo ${S}
     export SAMPLE=${S}
-    sbatch -n 1 -c 4 -t 3-0 --job-name="COUNTS" --dependency=afterany:${MKFASTQ%?} --output=$ROOT/Logs/Counts.${S}.log $ROOT/Scripts/Counts.sh
+    sbatch -n 1 -t 1-0 -c 6 --mem 128G --job-name="COUNTS" --dependency=afterany:${MKFASTQ%?} --output=$ROOT/Logs/Counts.${S}.log $ROOT/Scripts/Counts.sh
 done
 
 COUNTS=$(squeue -o "%A" -h -u dcoffey -n "COUNTS" -S i | tr "\n" ":")
 
 # Aggregate samples to one gene counts matrix
-sbatch -n 1 -c 4 -t 1-0 --job-name="AGGREGATE" --dependency=afterany:${COUNTS%?} --output=$ROOT/Logs/Aggregate.log $ROOT/Scripts/Aggregate.sh
+sbatch -n 1 -t 1-0 -c 6 --mem 128G --job-name="AGGREGATE" --dependency=afterany:${COUNTS%?} --output=$ROOT/Logs/Aggregate.log $ROOT/Scripts/Aggregate.sh
 
 AGGREGATE=$(squeue -o "%A" -h -u dcoffey -n "AGGREGATE" -S i | tr "\n" ":")
 
-# Secondary data filtering using MAGIC in R
-sbatch -n 1 -c 4 -t 1-0 --job-name="MAGIC" --dependency=afterany:${AGGREGATE%?} --wrap="ml R/3.6.0-foss-2016b-fh1\ Rscript $ROOT/Scripts/MAGIC.R" --output=$ROOT/Logs/MAGIC.log
-
 # Combine gene expression metrics
-sbatch -n 1 -c 4 -t 1-0 --job-name="COMBINE" --dependency=afterany:${AGGREGATE%?} --wrap="Rscript $ROOT/Scripts/CombineGEXmetrics.R" --output=$ROOT/Logs/MAGIC.log
+ml R/4.0.2-foss-2019b
+sbatch -n 1 -c 4 -t 1-0 --job-name="COMBINE" --dependency=afterany:${AGGREGATE%?} --wrap="Rscript $ROOT/Scripts/CombineGEXmetrics.R" --output=$ROOT/Logs/CombineGEXmetrics.log
 
 # Create symbolic link for GEX files
 for S in ${GEX_SAMPLES}; do

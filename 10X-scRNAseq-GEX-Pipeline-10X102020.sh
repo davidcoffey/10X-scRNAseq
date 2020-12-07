@@ -4,13 +4,12 @@
 # Updated October 26, 2020
 
 # Define universal variables
-export ROOT="/fh/fast/warren_h/users/dcoffey/scRNAseq/10X041619"
-export BCL_DIRECTORY="/fh/fast/warren_h/SR/ngs/illumina/dcoffey/190416_A00613_0023_AH7273DRXX/Raw"
-export FASTQ_DIRECTORY="$ROOT/Fastq/GEX"
-export SAMPLESHEET="$ROOT/SampleSheet/AH7273DRXX_041619.csv"
-export SAMPLESHEET_H5="$ROOT/SampleSheet/AH7273DRXX_H5_samples.csv"
+export ROOT="/fh/fast/warren_h/users/dcoffey/scRNAseq/10X102020"
+export FASTQ_DIRECTORY="/shared/ngs/illumina/dcoffey/201016_A00613_0187_AHVLG3DMXX/cellranger/mkfastq/HVLG3DMXX/outs/fastq_path"
+export SAMPLESHEET="$ROOT/SampleSheet/HVLG3DMXX_102020.csv"
+export SAMPLESHEET_H5="$ROOT/SampleSheet/HVLG3DMXX_H5_samples.csv"
 export GEX_REFERENCE="/shared/silo_researcher/Warren_E/ngs/ReferenceGenomes/Human_genomes/refdata-gex-GRCh38-2020-A"
-export GEX_SAMPLES="201687_6B_0 202823_6P_0 333196_6B_1 333224_6P_1"
+export GEX_SAMPLES="203428_4P_0_GEX 219747_25P_0_GEX 240343_30P_0_GEX 255945_43P_0_GEX 273442_4P_1_GEX 276148_52P_0_GEX 289023_56P_0_GEX 289894_58P_0_GEX 295198_25P_1_GEX 298771_66P_0_GEX 299361_67P_0_GEX 301077_64P_0_GEX 308146_73P_0_GEX 332751_30P_1_GEX 334277_43P_1_GEX 334330_88P_0_GEX 338291_52P_1_GEX 369521_56P_1_GEX 374868_66P_1_GEX 378886_73P_1_GEX 381401_64P_1_GEX 385922_58P_1_GEX 388178_88P_1_GEX 390589_67P_1_GEX"
 export MATRIX="$ROOT/Aggregate_unnormalized/outs/filtered_feature_bc_matrix/Filtered_expression_matrix.csv"
 
 # Make directories
@@ -21,11 +20,6 @@ mkdir -p $ROOT/Links/Web_summary
 mkdir -p $ROOT/Links/Metrics_summary
 mkdir -p $ROOT/Links/Combined
 mkdir -p $ROOT/Links/Expression_matrix
-
-# Convert 5' GEX BCL files to FASTQ files
-mkdir -p $FASTQ_DIRECTORY
-sbatch -n 1 -t 1-0 -c 6 --mem 128G --job-name="MKFASTQ" --output=$ROOT/Logs/MakeFastQ-GE.log $ROOT/Scripts/MakeFastQ.sh
-MKFASTQ=$(squeue -o "%A" -h -u dcoffey -n "MKFASTQ" -S i | tr "\n" ":")
 
 # Generate single cell gene counts
 for S in ${GEX_SAMPLES}; do

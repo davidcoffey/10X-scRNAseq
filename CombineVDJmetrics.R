@@ -1,6 +1,6 @@
 # Combine VDJ statistics
 # David Coffey dcoffey@fredhutch.org
-# Updated August 6, 2019
+# November 10, 2020
 
 library(data.table)
 library(plyr)
@@ -11,7 +11,7 @@ run = basename(Sys.getenv("ROOT"))
 path = paste(Sys.getenv("ROOT"), "Links", sep = "/")
 
 # Merge all contig annotations
-files = list.files(paste(path, "All_contig_annotations", sep = "/"), full.names = TRUE)
+files = list.files(paste(path, "All_contig_annotations", sep = "/"), full.names = TRUE, pattern = "all_contig_annotations.csv")
 all.contigs = plyr::llply(files, data.table::fread, data.table = FALSE, .progress = "text")
 names(all.contigs) = gsub(x = basename(files), pattern = ".all_contig_annotations.csv", replacement = "")
 all.contigs = plyr::ldply(all.contigs, data.frame, .id = "library")
@@ -19,7 +19,7 @@ all.contigs$SampleID = gsub(all.contigs$library, pattern = "_TCR|_BCR", replacem
 write.csv(all.contigs, file = paste(path, "/Combined/", run, "_all.contigs.csv", sep = ""), row.names = FALSE)
 
 # Merge clonotypes
-files = list.files(paste(path, "Clonotypes", sep = "/"), full.names = TRUE)
+files = list.files(paste(path, "Clonotypes", sep = "/"), full.names = TRUE, pattern = ".clonotypes.csv")
 clonotypes = plyr::llply(files, data.table::fread, data.table = FALSE, .progress = "text")
 names(clonotypes) = gsub(x = basename(files), pattern = ".clonotypes.csv", replacement = "")
 clonotypes = plyr::ldply(clonotypes, data.frame, .id = "library")
@@ -28,7 +28,7 @@ clonotypes$receptor = ifelse(grepl(clonotypes$cdr3s_aa, pattern = "TR"), "TCR", 
 write.csv(clonotypes, file = paste(path, "/Combined/", run, "_clonotypes.csv", sep = ""), row.names = FALSE)
 
 # Merge consensus annotations
-files = list.files(paste(path, "Consensus_annotations", sep = "/"), full.names = TRUE)
+files = list.files(paste(path, "Consensus_annotations", sep = "/"), full.names = TRUE, pattern = ".consensus_annotations.csv")
 consensus.annotations = plyr::llply(files, data.table::fread, data.table = FALSE, .progress = "text")
 names(consensus.annotations) = gsub(x = basename(files), pattern = ".consensus_annotations.csv", replacement = "")
 consensus.annotations = plyr::ldply(consensus.annotations, data.frame, .id = "library")
@@ -36,12 +36,20 @@ consensus.annotations$SampleID = gsub(consensus.annotations$library, pattern = "
 write.csv(consensus.annotations, file = paste(path, "/Combined/", run, "_consensus_annotations.csv", sep = ""), row.names = FALSE)
 
 # Merge filtered contig annotations
-files = list.files(paste(path, "Filtered_contig_annotations", sep = "/"), full.names = TRUE)
+files = list.files(paste(path, "Filtered_contig_annotations", sep = "/"), full.names = TRUE, pattern = ".filtered_contig_annotations.csv")
 filtered.contig.annotations = plyr::llply(files, data.table::fread, data.table = FALSE, .progress = "text")
 names(filtered.contig.annotations) = gsub(x = basename(files), pattern = ".filtered_contig_annotations.csv", replacement = "")
 filtered.contig.annotations = plyr::ldply(filtered.contig.annotations, data.frame, .id = "library")
 filtered.contig.annotations$SampleID = gsub(filtered.contig.annotations$library, pattern = "_TCR|_BCR", replacement = "")
 write.csv(filtered.contig.annotations, file = paste(path, "/Combined/", run, "_filtered_contig_annotations.csv", sep = ""), row.names = FALSE)
+
+# Merge filtered contig annotations
+files = list.files(paste(path, "Airr_rearrangements", sep = "/"), full.names = TRUE, pattern = "airr_rearrangement.tsv")
+airr.rearrangement = plyr::llply(files, data.table::fread, data.table = FALSE, .progress = "text")
+names(airr.rearrangement) = gsub(x = basename(files), pattern = "airr_rearrangement.tsv", replacement = "")
+airr.rearrangement = plyr::ldply(airr.rearrangement, data.frame, .id = "library")
+airr.rearrangement$SampleID = gsub(airr.rearrangement$library, pattern = "_TCR.|_BCR.", replacement = "")
+write.csv(airr.rearrangement, file = paste(path, "/Combined/", run, "_airr_rearrangement.csv", sep = ""), row.names = FALSE)
 
 # Merge VDJ metric summary
 files = list.files(paste(path, "Metrics_summary", sep = "/"), full.names = TRUE)
